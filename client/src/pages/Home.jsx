@@ -1,12 +1,51 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { logo, banner, banner_alt } from '../assets'
 import authService from '../services/authService'
+import postService from '../services/postService';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom'
 
+import { Loader, Card } from '../components'
+
+
+const RenderCards = ({ data, title }) => {
+    if(data?.length > 0) {
+        return data.map((post) => <Card key={post._id} {...post} />)
+    }
+
+    return (
+        <h2 className='mt-5 font-bold text-[#6469ff] text-xl uppercase'>{ title }</h2>
+    )
+}
+
+
+
 const Home = () => {
 
+	const [loading, setloading] = useState(false);
+    const [allPosts, setallPosts] = useState(null);
+
 	const navigate = useNavigate();
+
+	useEffect(() => {
+        const fetchPosts = async () => {
+            setloading(true);
+            try {
+                const response =  await postService.getAllVideos()
+                // if(response.ok){
+                    // const result = await response.json();
+					console.log(response);
+
+                    setallPosts(response.data.videos);
+                // }
+            } catch (error) {
+                alert(error);
+            } finally {
+                setloading(false)
+            }
+        }
+        fetchPosts();
+    }, []);
 
 
 	const hanleSignout =  () => {
@@ -78,68 +117,41 @@ const Home = () => {
 	<section>
     <div className="flex justify-evenly">
 		<div className="container max-w-6xl p-6 space-y-6 sm:space-y-12">
-			<a rel="noopener noreferrer" href="#" className="block max-w-sm gap-3 mx-auto sm:max-w-full group hover:no-underline focus:no-underline lg:grid lg:grid-cols-12 dark:bg-gray-900">
-				<img src="https://source.unsplash.com/random/480x360" alt="Website Design System" className="object-cover w-full h-64 rounded sm:h-96 lg:col-span-7 dark:bg-gray-500" />
-				<div className="p-6 space-y-2 lg:col-span-5">
-					<h3 className="text-2xl font-semibold sm:text-4xl group-hover:underline group-focus:underline">Noster tincidunt reprimique ad pro</h3>
-					<span className="text-xs dark:text-gray-400">February 19, 2021</span>
-					<p>Ei delenit sensibus liberavisse pri. Quod suscipit no nam. Est in graece fuisset, eos affert putent doctus id.</p>
-				</div>
-			</a>
-			<div className="grid justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?1" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 21, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?2" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 22, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?3" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 23, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 hidden sm:block">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?4" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 24, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 hidden sm:block">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?5" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 25, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
-				<a rel="noopener noreferrer" href="#" className="max-w-sm mx-auto group hover:no-underline focus:no-underline dark:bg-gray-900 hidden sm:block">
-					<img role="presentation" className="object-cover w-full rounded h-44 dark:bg-gray-500" src="https://source.unsplash.com/random/480x360?6" />
-					<div className="p-6 space-y-2">
-						<h3 className="text-2xl font-semibold group-hover:underline group-focus:underline">In usu laoreet repudiare legendos</h3>
-						<span className="text-xs dark:text-gray-400">January 26, 2021</span>
-						<p>Mei ex aliquid eleifend forensibus, quo ad dicta apeirian neglegentur, ex has tantas percipit perfecto. At per tempor albucius perfecto, ei probatus consulatu patrioque mea, ei vocent delicata indoctum pri.</p>
-					</div>
-				</a>
+			
+			{/* <div className="grid justify-center grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"> */}
+			{loading ? (
+                <div className='flex justify-center items-center'>
+                    <Loader />
+                </div>
+            ) : (
+                <>
+                    {/* if there is a searchText then render h2 */}
+                    {/* {searchText && (
+                        <h2 className='font-medium text-[#666e75] text-xl mb-3'>
+                            Showing results for <span className='text-[#222328]'>{ searchText }</span>
+                        </h2>
+                    )} */}
+                    <div className='grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3'>
+                        {/* {searchText ? (
+                            <RenderCards 
+                            data = {searchedResults}
+                            title="No search results found"
+                            />
+                        ) : ( */}
+                            <RenderCards 
+                            data= {allPosts}
+                            title="No posts found"
+                            />
+                        {/* )} */}
+                    </div>
+                </>
+            )}
+				
 			</div>
 			<div className="flex justify-center">
-				<button className="px-6 py-3 text-sm rounded-md hover:underline dark:bg-gray-900 dark:text-gray-400">Load more posts...</button>
+				{/* <button className="px-6 py-3 text-sm rounded-md hover:underline dark:bg-gray-900 dark:text-gray-400">Load more posts...</button> */}
 			</div>
-		</div>
+		{/* </div> */}
     </div>
 	</section>
 

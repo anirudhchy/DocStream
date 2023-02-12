@@ -6,11 +6,20 @@ const { uuid } = require('uuidv4');
 const VideoMetaData = require('../models/VideoMetaData')
 const  cloudinary = require('cloudinary').v2
 
+const { StatusCodes } = require('http-status-codes')
+
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+
+const getAllVideos = async (req,res) => {
+  const videos = await VideoMetaData.find({})
+  res.status(StatusCodes.OK).json({ videos })
+}
 
 
 const upload = async (req,res) => {
@@ -108,5 +117,6 @@ const stream = (req,res) => {
 
 module.exports = {
     stream,
-    upload
+    upload,
+    getAllVideos,
 }
