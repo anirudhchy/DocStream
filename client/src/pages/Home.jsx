@@ -4,25 +4,30 @@ import authService from '../services/authService'
 import postService from '../services/postService';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom'
+import { Modal } from '../components'
 
 import { Loader, Card } from '../components'
 
 
-const RenderCards = ({ data, title }) => {
-    if(data?.length > 0) {
-        return data.map((post) => <Card key={post._id} {...post} />)
-    }
-
-    return (
-        <h2 className='mt-5 font-bold text-[#6469ff] text-xl uppercase'>{ title }</h2>
-    )
-}
 
 
 
 const Home = () => {
-
+	
 	const [loading, setloading] = useState(false);
+	const RenderCards = ({ data, title }) => {
+		if(data?.length > 0) {
+			return data.map((post) => <Card key={post._id} {...post} 
+			handleShowModal={handleShowModal}
+			/>)
+		}
+	
+		return (
+			<h2 className='mt-5 font-bold text-[#6469ff] text-xl uppercase'>{ title }</h2>
+		)
+	}
+
+	
     const [allPosts, setallPosts] = useState(null);
 
 	const navigate = useNavigate();
@@ -66,7 +71,19 @@ const Home = () => {
 		
 	}
 
+	 const handleShowModal = (url) => {
+    setURL(url)
+    setShowModal(true)
+  }
+
+  const [showModal, setShowModal] = useState(false)
+
+  const [URL, setURL] = useState()
+  
+  const handleOnClose = () => setShowModal(false)
+
   return (
+	<>
     <div className="space-y-12 dark:bg-gray-800 dark:text-gray-100">
 	<header className="p-4">
 		<div className="container flex justify-between h-16 mx-auto">
@@ -193,6 +210,9 @@ const Home = () => {
 	</div>
 </footer>
 </div>
+<Modal onClose={handleOnClose} visible={showModal} URL={URL} />
+
+</>
   )
 }
 
