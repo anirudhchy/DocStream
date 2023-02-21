@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { logo, banner, banner_alt } from '../assets'
+import { logo } from '../assets'
 import authService from '../services/authService'
 import postService from '../services/postService';
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,13 @@ import { Loader, Card } from '../components'
 const Home = () => {
 	
 	const [loading, setloading] = useState(false);
+	const [allPosts, setallPosts] = useState(null);
+
+	const [searchText, setSearchText] = useState('');
+	const [searchedResults, setSearchedResults] = useState(null)
+	const [searchTimeout, setSearchTimeout] = useState(null)
+
+
 	const RenderCards = ({ data, title }) => {
 		if(data?.length > 0) {
 			return data.map((post) => <Card key={post._id} {...post} 
@@ -28,7 +35,6 @@ const Home = () => {
 	}
 
 	
-    const [allPosts, setallPosts] = useState(null);
 
 	const navigate = useNavigate();
 
@@ -39,7 +45,6 @@ const Home = () => {
                 const response =  await postService.getAllVideos()
                 // if(response.ok){
                     // const result = await response.json();
-					console.log(response);
 
                     setallPosts(response.data.videos);
                 // }
@@ -51,7 +56,7 @@ const Home = () => {
         }
         fetchPosts();
     }, []);
-
+	
 
 	const hanleSignout =  () => {
 
@@ -74,6 +79,19 @@ const Home = () => {
 	 const handleShowModal = (url) => {
     setURL(url)
     setShowModal(true)
+  }
+
+  const handleSearchChange = (e) => {
+	  clearTimeout(searchTimeout);
+	  setSearchText(e.target.value);
+
+	  setSearchTimeout(
+		  setTimeout(() => {
+			  const searchedResults = allPosts?.filter((post) => post.title.toLowerCase().includes(searchText.toLowerCase())) || post.description.toLowerCase().includes(searchText.toLowerCase())
+
+			  setSearchedResults(searchedResults);
+		  }, 500)
+	  )
   }
 
   const [showModal, setShowModal] = useState(false)
@@ -101,7 +119,10 @@ const Home = () => {
 				</svg>
 			</button>
 		</span>
-		<input type="search" name="Search" placeholder="Search..." className="w-32 py-2 pl-10 text-sm rounded-md sm:w-auto focus:outline-none dark:bg-gray-800 dark:text-gray-100 focus:dark:bg-gray-900 focus:dark:border-violet-400" />
+		<input type="search" name="Search" placeholder="Search..." className="w-32 py-2 pl-10 text-sm rounded-md sm:w-auto focus:outline-none dark:bg-gray-800 dark:text-gray-100 focus:dark:bg-gray-900 focus:dark:border-violet-400" 
+		value={searchText}
+		onChange={handleSearchChange}
+		/>
 	</div>
 </fieldset>
 </div>
@@ -143,23 +164,23 @@ const Home = () => {
             ) : (
                 <>
                     {/* if there is a searchText then render h2 */}
-                    {/* {searchText && (
-                        <h2 className='font-medium text-[#666e75] text-xl mb-3'>
-                            Showing results for <span className='text-[#222328]'>{ searchText }</span>
+                    {searchText && (
+                        <h2 className="text-2xl font-semibold">
+                            Showing results for <span className='text-white'>   {`"`}{ searchText }{`"`}</span>
                         </h2>
-                    )} */}
+                    )}
                     <div className='grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3'>
-                        {/* {searchText ? (
+                        {searchText ? (
                             <RenderCards 
                             data = {searchedResults}
                             title="No search results found"
                             />
-                        ) : ( */}
+                        ) : (
                             <RenderCards 
                             data= {allPosts}
                             title="No posts found"
                             />
-                        {/* )} */}
+                         )} 
                     </div>
                 </>
             )}
